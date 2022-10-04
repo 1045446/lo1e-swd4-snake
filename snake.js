@@ -1,57 +1,120 @@
-
-document.getElementById('snake');
-
 let canvas = document.getElementById("snake");
-let ctx = canvas.getContext("2d");
+let context = canvas.getContext("2d");
 
-let snakeX = 190;
-let snakeY = 190;
-let direction = 'null';
-
-
-function drawBackground(){
-ctx.fillStyle = "black";
-ctx.fillRect(0, 0, 400, 400);
+let snakeX = 200;
+let snakeY = 200;
+let snake = [
+{
+x: 200,
+y: 200
+},
+{
+    x:220,
+    y:200
 }
-drawSnake();
+];
+let foodX;
+let foodY;
 
+let direction = null;
+
+// Draw the background
+function drawBackground() {
+    context.fillStyle = "black";
+    context.fillRect(0, 0, 400, 400);
+}
+
+// Draw the snake
 function drawSnake() {
-    ctx.fillStyle = "white";
-    ctx.fillRect(snakeX, snakeY, 20, 20);
+    context.fillStyle = "white";
+
+    for (let index = 0; index < snake.length; index++) {
+        context.fillRect(snake[index].x, snake[index].y, 20, 20);
+    }
+    context.fillRect(snake[0].x, snake[0].y, 20, 20);
+}
+//verplaatst de snake
+function update() {
+    let tailIndex = snake.length -1;
+    let tailX=[tailIndex].x;
+    let tailY=[tailIndex].y;
+    if (direction != null) {
+    for(let index= snake.length -1; index > 0; index--) {
+        snake[index].x = snake[index - 1].x;
+        snake[index].y = snake[index - 1].y;
+    }
 }
 
 
-function update() {
-    if(direction == 'right') {
-snakeX= snakeX +20;
-    } else if (direction ==  'left') {
-snakeX -= 20;
-    }
-    else if (direction == 'up') {
-        snakeY -=20;
-    }
-    else if (direction == 'down') {
-        snakeY +=20;
+    if (direction == "right") {
+        if (snake[0].x < 380) {
+            snake[0].x += 20;
+        } else {
+            gameOver();
+        }
+
+    } else if (direction == "left") {
+        if (snake[0].x > 0) {
+            snake[0].x -= 20;
+        } else {
+            gameOver();
+        }
+
+    } else if (direction == "up") {
+        if (snake[0].y > 0) {
+            snake[0].y -= 20;
+        } else {
+            gameOver();
+        }
+
+    } else if (direction == "down") {
+        if (snake[0].y < 380) {
+            snake[0].y += 20;
+        } else {
+            gameOver();
+        }
     }
 
-drawBackground();
-drawSnake();
+    //Appel eten als positie snake en food zelfde zijn
+   if (foodX == snakeX && foodY == snakeY) {
+   alert("Hap!");
+
+    spawnFood();
+   }
+    drawBackground();
+    drawSnake();
+    drawFood();
 }
 
 function changeDirection(event) {
-    if( event.code == 'ArrowUp') {
-        direction = 'up';
-    } else if ( event.code == 'ArrowRight') {
-        direction = 'right';
-    } else if ( event.code == 'ArrowLeft') {
-        direction = 'left';
-    } else if ( event.code == 'ArrowDown') {
-        direction = 'down';
+    if (event.code == "ArrowUp") {
+        direction = "up";
+    } else if (event.code == "ArrowRight") {
+        direction = "right";
+    } else if (event.code == "ArrowLeft") {
+        direction = "left";
+    } else if (event.code == "ArrowDown") {
+        direction = "down";
     }
+}
+
+function gameOver() {
+    direction = null;
+    alert("Game Over!");
+}
+//geeft de appel een nieuwe plek
+function spawnFood() {
+    foodX = Math.floor(Math.random() * 20) * 20;
+    foodY = Math.floor(Math.random() * 20) * 20;
+}
+//tekent de appel
+function drawFood() {
+    context.fillStyle = "red";
+    context.fillRect(foodX, foodY, 20, 20);
 }
 
 drawBackground();
 drawSnake();
-setInterval(update, 500)
-addEventListener('keydown', changeDirection);
-
+setInterval(update, 500);
+addEventListener("keydown", changeDirection);
+spawnFood();
