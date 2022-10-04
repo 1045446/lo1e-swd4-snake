@@ -96,6 +96,9 @@ function update() {
 
 function changeDirection(event) {
     if (event.code == "ArrowUp") {
+        if (direction !='down') {
+            direction= "up"
+        }
         direction = "up";
     } else if (event.code == "ArrowRight") {
         direction = "right";
